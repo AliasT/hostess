@@ -100,7 +100,7 @@ impl Hostfile {
       if host.valid {
         line = format!("{}{} {}\n", is_comment, host.ip.unwrap(), host.domain.as_ref().unwrap());
       } else {
-        line = host.comment.clone();
+        line = format!("{}\n", host.comment.clone());
       }
 
       result.push_str(line.as_str());
