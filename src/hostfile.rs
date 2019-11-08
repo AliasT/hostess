@@ -6,6 +6,7 @@ use super::hostname;
 
 use pad::*;
 
+use std::error;
 use std::cmp;
 use std::fs;
 use std::fs::File;
@@ -47,15 +48,17 @@ impl Hostfile {
   }
 
   /// append item to hosts
-  pub fn append(&mut self, domain: String, ip: &str) {
+  pub fn append(&mut self, domain: String, ip: &str) -> Result<(), Box<dyn error::Error>> {
     let host = hostname::Hostname {
-      ip: ip.parse().expect("wrong ip format"),
-      domain,
+      ip: Some(ip.parse()?),
+      domain: Some(domain),
+      valid: true,
       enabled: true,
       comment: String::from(""),
     };
 
     self.hosts.push(host);
+    Ok(())
   }
 
   /// remove item from hosts
@@ -66,7 +69,7 @@ impl Hostfile {
   // enable item
   pub fn on(&mut self, domain: String) -> &Self {
     for host in &mut self.hosts {
-      if host.domain == domain {
+      if host.domain == Some(domain.clone()) {
         host.enabled = true;
       }
     }
@@ -76,7 +79,7 @@ impl Hostfile {
   // disable item
   pub fn off(&mut self, domain: String) -> &Self {
     for host in &mut self.hosts {
-      if host.domain == domain {
+      if host.domain == Some(domain.clone()) {
         host.enabled = false;
       }
     }
@@ -93,7 +96,13 @@ impl Hostfile {
 
     for host in &self.hosts {
       let is_comment = if host.enabled { "" } else { "# " };
-      let line = format!("{}{} {}\n", is_comment, host.ip.to_string(), host.domain);
+      let line;
+      if host.valid {
+        line = format!("{}{} {}\n", is_comment, host.ip.unwrap(), host.domain.as_ref().unwrap());
+      } else {
+        line = host.comment.clone();
+      }
+
       result.push_str(line.as_str());
     }
 
@@ -107,36 +116,43 @@ impl Hostfile {
 
     // compute max len for output
     for host in &self.hosts {
-      max_domain_len = cmp::max(host.domain.len(), max_domain_len);
-      max_ip_len = cmp::max(host.ip.to_string().len(), max_ip_len);
-    }
+      if let Some(ip) = host.ip {
+        max_domain_len = cmp::max(host.domain.as_ref().unwrap().len(), max_domain_len);
+        max_ip_len = cmp::max(ip.to_string().len(), max_ip_len);
+
+      }
+   }
 
     for host in &self.hosts {
       let status = if host.enabled { "(on)" } else { "(off)" };
+      if let Some(ip) = host.ip {
       println!(
         "{} -> {} {}",
-        host.domain.pad_to_width(max_domain_len),
-        host.ip.to_string().pad_to_width(max_ip_len),
+        host.domain.as_ref().unwrap().pad_to_width(max_domain_len),
+        ip.to_string().pad_to_width(max_ip_len),
         status
       );
-    }
+
+      }
+   }
   }
 
-  fn parse_line(mut line: String) -> hostlist::Hostlist {
+  fn parse_line(source_string: String) -> hostlist::Hostlist {
     let mut hostlist: hostlist::Hostlist = Vec::new();
     let mut enabled = true;
 
     // comment
-    if line.starts_with("#") {
+    let mut source = source_string.clone();
+
+    // 去除首尾空白
+    source = source.trim().to_string();
+    if source.starts_with("#") {
       enabled = false;
-      line.remove(0);
+      source.remove(0);
     }
 
-    // trim whitespaces
-    line = line.trim().to_string();
-
     // Parse other # for actual comments
-    let line: Vec<&str> = line.split("#").collect();
+    let line: Vec<&str> = source.split("#").collect();
 
     // host 条目
     let content: &str = line.get(0).unwrap();
@@ -158,14 +174,26 @@ impl Hostfile {
     if let Some(ip) = ip {
       for (_, domain) in words.enumerate() {
         let id = hostname::Hostname {
-          ip,
+          ip: Some(ip),
           enabled,
-          domain: domain.to_string(),
+          valid: true,
+          domain: Some(domain.to_string()),
           comment: String::from(comment),
         };
         hostlist.push(id);
       }
+    } else {
+      // 如果parse失败，将整行当作注释直接存储。
+      let id = hostname::Hostname {
+        ip: None,
+        domain: None,
+        enabled: false,
+        comment: source_string,
+        valid: false,
+      };
+      hostlist.push(id);
     }
+
 
     hostlist
   }

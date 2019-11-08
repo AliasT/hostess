@@ -36,13 +36,11 @@ fn main() {
 
     // add
     if let Some(matches) = matches.subcommand_matches("add") {
-        let domain = matches.value_of("domain").unwrap();
+        let domain = matches.value_of("domain").unwrap_or_default();
         // 默认使用127.0.0.1
-        let ip = match matches.value_of("ip") {
-            Some(ip) => ip,
-            None => "127.0.0.1",
-        };
-        hosts.append(String::from(domain), ip);
+        let ip = matches.value_of("ip").unwrap_or("127.0.0.1");
+
+        hosts.append(String::from(domain), ip).unwrap();
         hosts.save();
     }
 
@@ -57,4 +55,5 @@ fn main() {
         let domain = matches.value_of("domain").unwrap();
         hosts.off(String::from(domain)).save();
     }
+
 }
