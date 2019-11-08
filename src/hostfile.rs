@@ -6,8 +6,8 @@ use super::hostname;
 
 use pad::*;
 
-use std::error;
 use std::cmp;
+use std::error;
 use std::fs;
 use std::fs::File;
 use std::io::prelude::*;
@@ -98,7 +98,12 @@ impl Hostfile {
       let is_comment = if host.enabled { "" } else { "# " };
       let line;
       if host.valid {
-        line = format!("{}{} {}\n", is_comment, host.ip.unwrap(), host.domain.as_ref().unwrap());
+        line = format!(
+          "{}{} {}\n",
+          is_comment,
+          host.ip.unwrap(),
+          host.domain.as_ref().unwrap()
+        );
       } else {
         line = format!("{}\n", host.comment.clone());
       }
@@ -119,22 +124,20 @@ impl Hostfile {
       if let Some(ip) = host.ip {
         max_domain_len = cmp::max(host.domain.as_ref().unwrap().len(), max_domain_len);
         max_ip_len = cmp::max(ip.to_string().len(), max_ip_len);
-
       }
-   }
+    }
 
     for host in &self.hosts {
       let status = if host.enabled { "(on)" } else { "(off)" };
       if let Some(ip) = host.ip {
-      println!(
-        "{} -> {} {}",
-        host.domain.as_ref().unwrap().pad_to_width(max_domain_len),
-        ip.to_string().pad_to_width(max_ip_len),
-        status
-      );
-
+        println!(
+          "{} -> {} {}",
+          host.domain.as_ref().unwrap().pad_to_width(max_domain_len),
+          ip.to_string().pad_to_width(max_ip_len),
+          status
+        );
       }
-   }
+    }
   }
 
   fn parse_line(source_string: String) -> hostlist::Hostlist {
@@ -193,7 +196,6 @@ impl Hostfile {
       };
       hostlist.push(id);
     }
-
 
     hostlist
   }
