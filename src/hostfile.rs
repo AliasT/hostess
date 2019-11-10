@@ -86,7 +86,6 @@ impl Hostfile {
     self
   }
 
-  //
   /// save write contents to hosts file
   /// this action remove all comments currently
   /// TODO: keep action
