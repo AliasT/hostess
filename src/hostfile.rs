@@ -12,7 +12,6 @@ use std::fs;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
-use std::net::IpAddr;
 
 #[derive(Debug)]
 pub struct Hostfile {
@@ -160,21 +159,13 @@ impl Hostfile {
     // host 条目
     let content: &str = line.get(0).unwrap();
     // 评论内容
-    let comment: &str = match line.get(1) {
-      Some(comment) => comment,
-      None => &"",
-    };
-
+    let comment: &str = line.get(1).unwrap_or(&"");
     let mut words = content.split_whitespace();
 
     // force now!
-    let ip = match words.next().unwrap_or_default().parse() {
-      Ok(IpAddr::V4(ip)) => Some(IpAddr::V4(ip)),
-      Ok(IpAddr::V6(ip)) => Some(IpAddr::V6(ip)),
-      _ => None,
-    };
+    let ip = words.next().unwrap_or_default().parse();
 
-    if let Some(ip) = ip {
+    if let Ok(ip) = ip {
       for (_, domain) in words.enumerate() {
         let id = hostname::Hostname {
           ip: Some(ip),
