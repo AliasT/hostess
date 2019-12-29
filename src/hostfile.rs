@@ -5,13 +5,13 @@ use super::hostlist;
 use super::hostname;
 
 use pad::*;
-
 use std::cmp;
 use std::error;
 use std::fs;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
+use yansi::Paint;
 
 #[derive(Debug)]
 pub struct Hostfile {
@@ -126,7 +126,11 @@ impl Hostfile {
     }
 
     for host in &self.hosts {
-      let status = if host.enabled { "(on)" } else { "(off)" };
+      let status = if host.enabled {
+        format!("({})", Paint::green("on"))
+      } else {
+        format!("({})", Paint::red("off"))
+      };
       if let Some(ip) = host.ip {
         println!(
           "{} -> {} {}",
