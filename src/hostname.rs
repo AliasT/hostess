@@ -1,7 +1,7 @@
 use std::net::IpAddr;
+use std::cmp::{PartialEq};
 
-
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Hostname {
   pub domain: Option<String>,
   pub ip: Option<IpAddr>,

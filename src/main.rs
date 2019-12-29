@@ -15,7 +15,12 @@ fn main() {
         .subcommand(
             SubCommand::with_name("off")
                 .arg(Arg::with_name("domain").index(1))
-                .about("disable host item, aka remove"),
+                .about("disable host item"),
+        )
+        .subcommand(
+            SubCommand::with_name("rm")
+                .arg(Arg::with_name("domain").index(1))
+                .about("remove host item"),
         )
         .subcommand(
             SubCommand::with_name("add")
@@ -56,4 +61,9 @@ fn main() {
         hosts.off(String::from(domain)).save();
     }
 
+    // remove
+    if let Some(matches) = matches.subcommand_matches("rm") {
+        let domain = matches.value_of("domain").unwrap();
+        hosts.remove(String::from(domain)).save();
+    }
 }
