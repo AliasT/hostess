@@ -107,17 +107,16 @@ impl Hostfile {
 
     for host in &self.hosts {
       let is_comment = if host.enabled { "" } else { "# " };
-      let line;
-      if host.valid {
-        line = format!(
+      let line = if host.valid {
+        format!(
           "{}{} {}\n",
           is_comment,
           host.ip.unwrap(),
           host.domain.as_ref().unwrap()
-        );
+        )
       } else {
-        line = format!("{}\n", host.comment.clone());
-      }
+        format!("{}\n", host.comment.clone())
+      };
 
       result.push_str(line.as_str());
     }
