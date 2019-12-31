@@ -57,40 +57,46 @@ impl Hostfile {
     };
 
     self.hosts.push(host);
+    self.save();
+
+    println!("{}", Paint::green("success!"));
+
     Ok(())
   }
 
   /// remove item from hosts
-  pub fn remove(&mut self, domain: String) -> &Self {
-    for i in 0..self.hosts.len() - 1 {
+  pub fn remove(&mut self, domain: String) {
+    for i in 0..self.hosts.len() {
       let host = &self.hosts[i];
       if host.domain == Some(domain.clone()) {
-        println!("{} {}", domain, Paint::red("removed"));
+        println!("{} {}", domain, Paint::red("removed!"));
         self.hosts.remove(i as usize);
       }
     }
-    self
+    self.save();
   }
 
   // enable item
-  pub fn on(&mut self, domain: String) -> &Self {
+  pub fn on(&mut self, domain: String) {
     for host in &mut self.hosts {
       if host.domain == Some(domain.clone()) {
         host.enabled = true;
       }
     }
-    self
+    self.save();
+    println!("{}", Paint::green("success!"));
   }
 
   // disable item
-  pub fn off(&mut self, domain: String) -> &Self {
+  pub fn off(&mut self, domain: String) {
     for host in &mut self.hosts {
       if host.domain == Some(domain.clone()) {
         host.enabled = false;
       }
     }
 
-    self
+    println!("{} {}", domain, Paint::green("disabled!"));
+    self.save();
   }
 
   /// save write contents to hosts file

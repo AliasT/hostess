@@ -6,28 +6,28 @@ use hostess::hostfile;
 // @TODO: cli app
 fn main() {
     let matches = App::new("Hostess")
-        .subcommand(SubCommand::with_name("list").about("list all hosts item"))
+        .subcommand(SubCommand::with_name("list").about("List all hosts item"))
         .subcommand(
             SubCommand::with_name("on")
                 .arg(Arg::with_name("domain").index(1))
-                .about("enable a host item"),
+                .about("Enable a host item"),
         )
         .subcommand(
             SubCommand::with_name("off")
                 .arg(Arg::with_name("domain").index(1))
-                .about("disable host item"),
+                .about("Disable host item"),
         )
         .subcommand(
             SubCommand::with_name("rm")
                 .arg(Arg::with_name("domain").index(1))
-                .about("remove host item"),
+                .about("Remove host item"),
         )
         .subcommand(
             SubCommand::with_name("add")
                 .arg(Arg::with_name("domain").index(1))
                 .arg(Arg::with_name("ip").index(2))
-                .about("add a new host item")
-                .usage("add [domain] [ip]"),
+                .about("Add a new host item")
+                .usage("Add [domain] [ip]"),
         )
         .get_matches();
 
@@ -46,24 +46,23 @@ fn main() {
         let ip = matches.value_of("ip").unwrap_or("127.0.0.1");
 
         hosts.append(String::from(domain), ip).unwrap();
-        hosts.save();
     }
 
     // enable
     if let Some(matches) = matches.subcommand_matches("on") {
         let domain = matches.value_of("domain").unwrap();
-        hosts.on(String::from(domain)).save();
+        hosts.on(String::from(domain));
     }
 
     // disable
     if let Some(matches) = matches.subcommand_matches("off") {
         let domain = matches.value_of("domain").unwrap();
-        hosts.off(String::from(domain)).save();
+        hosts.off(String::from(domain));
     }
 
     // remove
     if let Some(matches) = matches.subcommand_matches("rm") {
         let domain = matches.value_of("domain").unwrap();
-        hosts.remove(String::from(domain)).save();
+        hosts.remove(String::from(domain));
     }
 }
