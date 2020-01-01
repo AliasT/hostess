@@ -9,7 +9,7 @@ Command-line utility for managing your /etc/hosts file, built with rust
 ## Usage
 
 | name                        | age            |
-| --------------------------- | -------------- |
+| :-------------------------- | :------------- |
 | `hostess list`              | list all hosts |
 | `hostess add [domain] [ip]` | add a host     |
 | `hostess rm [domain]`       | add a host     |
