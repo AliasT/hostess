@@ -8,13 +8,13 @@ Command-line utility for managing your /etc/hosts file, built with rust
 
 ## Usage
 
-| name                        | age            |
+| Command                     | Description    |
 | :-------------------------- | :------------- |
-| `hostess list`              | list all hosts |
-| `hostess add [domain] [ip]` | add a host     |
-| `hostess rm [domain]`       | add a host     |
-| `hostess on [domain]`       | enable a host  |
-| `hostess off [domain]`      | disable a host |
+| `hostess list`              | List all hosts |
+| `hostess add [domain] [ip]` | Add a host     |
+| `hostess rm [domain]`       | Add a host     |
+| `hostess on [domain]`       | Enable a host  |
+| `hostess off [domain]`      | Disable a host |
 
 ## Todo
 
