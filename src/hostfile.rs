@@ -66,7 +66,8 @@ impl Hostfile {
 
   /// remove item from hosts
   pub fn remove(&mut self, domain: String) {
-    for i in 0..self.hosts.len() {
+    let len = self.hosts.len();
+    for i in 0..len - 1 {
       let host = &self.hosts[i];
       if host.domain == Some(domain.clone()) {
         println!("{} {}", domain, Paint::red("removed!"));

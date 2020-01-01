@@ -1,6 +1,6 @@
 [package]
 name = "hostess"
-version = "0.2.4"
+version = "0.2.5"
 authors = ["aliast"]
 edition = "2018"
 license = "MIT"
