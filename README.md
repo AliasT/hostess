@@ -18,4 +18,4 @@ Command-line utility for managing your /etc/hosts file, built with rust
 
 ## Todo
 
-- [] regex
+- [ ] regex
