@@ -5,13 +5,15 @@ use super::hostlist;
 use super::hostname;
 
 use pad::*;
+use yansi::Paint;
+
 use std::cmp;
 use std::error;
 use std::fs;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
-use yansi::Paint;
+use std::path::{Path}
 
 #[derive(Debug)]
 pub struct Hostfile {
@@ -20,7 +22,7 @@ pub struct Hostfile {
 }
 
 impl Hostfile {
-  fn new(path: &str) -> Hostfile {
+  fn new(path: dyn AsRef<Path>) -> Hostfile {
     let file = File::open(path).unwrap();
     let file_reader = BufReader::new(file);
     let mut hosts: hostlist::Hostlist = Vec::new();
@@ -170,6 +172,7 @@ impl Hostfile {
 
     // host 条目
     let content: &str = line.get(0).unwrap();
+
     // 评论内容
     let comment: &str = line.get(1).unwrap_or(&"");
     let mut words = content.split_whitespace();
